@@ -1,0 +1,2056 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+
+<p>Xcode 7 introduces new UI testing features fully integrated into the IDE. Learn about the new APIs and how UI testing fits in with existing testing features in Xcode. See how to get started by recording your app, and how to efficiently craft and maintain UI tests.</p>
+
+<p></p>
+
+<p>WIL TURNER: Good morning.</p>
+
+<p></p>
+
+<p>And welcome to UI testing in Xcode.</p>
+
+<p></p>
+
+<p>My name is Wil Turner.</p>
+
+<p></p>
+
+<p>With me is Brooke Callahan.</p>
+
+<p></p>
+
+<p>We both work on the Xcode developer tools.</p>
+
+<p></p>
+
+<p>And I am extremely excited today because we are sharing with you a huge expansion of the testing technology in the Xcode developer tools.</p>
+
+<p></p>
+
+<p>That is UI testing.</p>
+
+<p></p>
+
+<p>With UI testing you can find user interface elements, interact with them, and validate the UI properties in state.</p>
+
+<p></p>
+
+<p>Along with UI testing, we've introduced UI recording which will allow you to really rapidly set up UI testing for your projects.</p>
+
+<p></p>
+
+<p>Finally, we've updated the test reports in Xcode, which show the pass and fail and results of your test outcomes, to accommodate new data we have with UI testing.</p>
+
+<p></p>
+
+<p>So I want to talk about the core technologies for UI testing, the first is XCTest.</p>
+
+<p></p>
+
+<p>The second is accessibility.</p>
+
+<p></p>
+
+<p>So XCTest is Xcode's testing framework.</p>
+
+<p></p>
+
+<p>In it, you create subclasses for your test cases, you implement test methods, and you use assertions to validate that your expected outcomes are holding true.</p>
+
+<p></p>
+
+<p>XCtest is integrated with Xcode, which means you get everything from the ID in terms of code completion, debugging, and the ability to run your tests directly from your source code, and see the results right there.</p>
+
+<p></p>
+
+<p>You also get continuous integration via Xcode Server and Xcodebuild.</p>
+
+<p></p>
+
+<p>Finally, XCTest supports both Swift and Objective-C, so you can choose the native coding language that you're most comfortable with.</p>
+
+<p></p>
+
+<p>XCTest was introduced in Xcode 5 as a unit testing framework.</p>
+
+<p></p>
+
+<p>In Xcode 6, we expanded it to support performance testing.</p>
+
+<p></p>
+
+<p>This allows you to catch regressions in your code, and ensure that it continues to perform optimally, release to release.</p>
+
+<p></p>
+
+<p>Now in Xcode 7, we've introduced UI testing which you can use for both correctness and performance testing.</p>
+
+<p></p>
+
+<p>So that's XCTest.</p>
+
+<p></p>
+
+<p>Now let's take a look at Accessibility.</p>
+
+<p></p>
+
+<p>Accessibility is the technology on our platforms, that gives disabled people the same great experience on our devices and with our applications that all other users receive.</p>
+
+<p></p>
+
+<p>To make Accessibility work, it offers a rich set of semantic data about the UI that technologies like Voice Over can use to guide users through the application.</p>
+
+<p></p>
+
+<p>UI testing uses that, and Accessibility is integrated with the UI kit, and app kit, so, when you use controls from those frameworks, you get a lot of accessibility support for free, right out of the box.</p>
+
+<p></p>
+
+<p>It also provides APIs that allow you to fine tune the accessibility data that is exposed.</p>
+
+<p></p>
+
+<p>The key about this is that with UI testing, your tests will interact with the application just the way a user does.</p>
+
+<p></p>
+
+<p>UI testing has a few requirements that you should understand.</p>
+
+<p></p>
+
+<p>The first is it depends on new features in the OS.</p>
+
+<p></p>
+
+<p>For iOS you need iOS 9 and for OS X you need OS 10.11.</p>
+
+<p></p>
+
+<p>UI testing protects your privacy.</p>
+
+<p></p>
+
+<p>And to do so it means your iOS devices need to be enabled for development and connected to a trusted host running Xcode.</p>
+
+<p></p>
+
+<p>On OS X you'll need to grant permission to a special Xcode helper app, and you will be prompted to do so the first time you run UI tests.</p>
+
+<p></p>
+
+<p>Let's take a look at what you need to get started with UI test in your project.</p>
+
+<p></p>
+
+<p>First of all there's a new Xcode target type.</p>
+
+<p></p>
+
+<p>Traditionally, unit tests were a specific target type in Xcode, and now UI tests are target type as well.</p>
+
+<p></p>
+
+<p>We've also introduced a large set of set of new APIs for UI test, and of course UI recording, which will really get you started quickly.</p>
+
+<p></p>
+
+<p>So the Xcode testing targets support the special requirements that UI tests have.</p>
+
+<p></p>
+
+<p>This includes executing in a separate process from your application that you are testing.</p>
+
+<p></p>
+
+<p>And it also handles the permission to use Accessibility in the privacy protection.</p>
+
+<p></p>
+
+<p>These targets have new templates for both Cocoa and Cocoa Touch and the assistant for these will set everything up the way you need it to get started.</p>
+
+<p></p>
+
+<p>There's a target to be tested setting for UI test bundles that identifies the application that you are testing.</p>
+
+<p></p>
+
+<p>In the new APIs there are three key classes.</p>
+
+<p></p>
+
+<p>The first is applications.</p>
+
+<p></p>
+
+<p>The second is elements.</p>
+
+<p></p>
+
+<p>And the third is element query.</p>
+
+<p></p>
+
+<p>We will take a deep dive into these APIs a little bit later in the presentation.</p>
+
+<p></p>
+
+<p>UI Recording lets you interact with your application hands-on your device, the simulator, or OS X Mac.</p>
+
+<p></p>
+
+<p>While you are doing so, it generates the code necessary to recreate those interactions.</p>
+
+<p></p>
+
+<p>You can do this to create new tests or expand existing tests.</p>
+
+<p></p>
+
+<p>So let's take a look at what this is all about.</p>
+
+<p></p>
+
+<p>Brooke, let's see a quick demo.</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>BROOKE CALLAHAN: Thanks, Wil.</p>
+
+<p></p>
+
+<p>So, without further ado.</p>
+
+<p></p>
+
+<p>The project I'm going to be using for the demo today is the lister application.</p>
+
+<p></p>
+
+<p>This is an example project that you can download from developer.Apple.com.</p>
+
+<p></p>
+
+<p>So, let's get started, now it's got my target configured just the way I want, but the one part I want to point out is that the target to be tested is the lister application.</p>
+
+<p></p>
+
+<p>This is the one application that my tests will be able to interact with.</p>
+
+<p></p>
+
+<p>So now I've got my new test class here.</p>
+
+<p></p>
+
+<p>And there's a little stub test method here and a setup function which is going to call, which is going to launch the application before my test method is called.</p>
+
+<p></p>
+
+<p>And it's going to do that for all the test methods I add to this class.</p>
+
+<p></p>
+
+<p>So Let's add a new test from the lister app.</p>
+
+<p></p>
+
+<p>I'm going to put the keyboard cursor in the method and click on the record button down the debug bar.</p>
+
+<p></p>
+
+<p>Now, Xcode is launching my application.</p>
+
+<p></p>
+
+<p>And here it is.</p>
+
+<p></p>
+
+<p>The lister application allows me to manage a series of lists.</p>
+
+<p></p>
+
+<p>So probably the most common thing people do is add and remove items from their list.</p>
+
+<p></p>
+
+<p>So I am going to click here, add item.</p>
+
+<p></p>
+
+<p>It looks like we have a lot of health some things in this grocery list.</p>
+
+<p></p>
+
+<p>So I'm going to add cookies.</p>
+
+<p></p>
+
+<p>You can see that, as I'm typing, the source header is updating.</p>
+
+<p></p>
+
+<p>If I press delete, it also removes what I removed from the text field.</p>
+
+<p></p>
+
+<p>Next thing I'm going to do is tap on the cookies item to mark it as completed.</p>
+
+<p></p>
+
+<p>And another thing I can do in this application is remove items from the list.</p>
+
+<p></p>
+
+<p>So I'll click on edit, and then delete cookies, and the delete confirmation button, and finally done.</p>
+
+<p></p>
+
+<p>Great. Now I have a simple test that adds and removes an item from the list.</p>
+
+<p></p>
+
+<p>So I'll click stop.</p>
+
+<p></p>
+
+<p>Let's see that in action.</p>
+
+<p></p>
+
+<p>It added the cookies and it is removing it.</p>
+
+<p></p>
+
+<p>And we are done.</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>Thanks. As the test interacts with UI elements, we get implicit validation that those UI elements exist.</p>
+
+<p></p>
+
+<p>But What we don't get validation of, are things like state changes in the application.</p>
+
+<p></p>
+
+<p>For example, when we tapped on that cookies button, we don't get any validation that the state of the button actually changed.</p>
+
+<p></p>
+
+<p>And later on in the test, when it taps on the delete confirmation button, we know that the delete confirmation button was tapped.</p>
+
+<p></p>
+
+<p>but running the test doesn't validate that the cookies row actually is removed.</p>
+
+<p></p>
+
+<p>So to get validation of those for my test, I want to add some explicit assertions.</p>
+
+<p></p>
+
+<p>First thing I am going to do is add an assertion that the cookies button here actually changes its state.</p>
+
+<p></p>
+
+<p>To do that, I will add a new constant.</p>
+
+<p></p>
+
+<p>Call this let cookies button.</p>
+
+<p></p>
+
+<p>I'm going to change the test to tap on that constant.</p>
+
+<p></p>
+
+<p>Now, to add the assertion I need some state, some properties of the element to assert on.</p>
+
+<p></p>
+
+<p>And cookies button is XUI element and XUI elements have a value property.</p>
+
+<p></p>
+
+<p>What I'm going to do, is I'm going to set a breakpoint here, and run the test to that point.</p>
+
+<p></p>
+
+<p>So here we have the test in the state where it's added the cookies row.</p>
+
+<p></p>
+
+<p>And it has yet to tap on that button.</p>
+
+<p></p>
+
+<p>So I'm going to go in the debugger, and print out the value of this cookies button.</p>
+
+<p></p>
+
+<p>Little typo.</p>
+
+<p></p>
+
+<p>there we go.</p>
+
+<p></p>
+
+<p>I can see that the value of the cookies button is the string with the number zero in it.</p>
+
+<p></p>
+
+<p>Next I'm going to step over that line.</p>
+
+<p></p>
+
+<p>So now it's tap the cookies button.</p>
+
+<p></p>
+
+<p>I will print out the value of it again and now I can see that the value of the button is the string with the number one.</p>
+
+<p></p>
+
+<p>Great. So now I have all the information that I need to assert that the value of the button changes when it's tapped.</p>
+
+<p></p>
+
+<p>So I'm going to add an assertion using XCT assert equal.</p>
+
+<p></p>
+
+<p>I'll assert that the value after the tap is a string with the number one.</p>
+
+<p></p>
+
+<p>The value is in any object.</p>
+
+<p></p>
+
+<p>So I am going to need to assert that this is a string.</p>
+
+<p></p>
+
+<p>So I'll use as string.</p>
+
+<p></p>
+
+<p>And assert that it's number one after the tap.</p>
+
+<p></p>
+
+<p>And I'll assert that it is the number string with the number zero before the tap.</p>
+
+<p></p>
+
+<p>And lastly, after the delete confirmation button is tapped I want to assert that that cookies row goes away.</p>
+
+<p></p>
+
+<p>I'll call XCT assert equal and assert that the button no longer exists.</p>
+
+<p></p>
+
+<p>Now iIf I run this test again we should see it does all the same thing but also passing these assertions.</p>
+
+<p></p>
+
+<p>Great, so now I have just added my first test.</p>
+
+<p></p>
+
+<p>Back to you, Wil.</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>WIL TURNER: That was pretty awesome.</p>
+
+<p></p>
+
+<p>You can see just how easily Brooke took an existing application and used it, just like he would as a user, and in a handful of minutes he created a test.</p>
+
+<p></p>
+
+<p>He could expand that test using XCT assert to do some additional validation and he just added reliability to his project with minimal effort.</p>
+
+<p></p>
+
+<p>That's pretty exciting.</p>
+
+<p></p>
+
+<p>So you can see we added UI testing target, very straightforward just like all our other other targets, with an assistant and templates.</p>
+
+<p></p>
+
+<p>Used recording, interacted with the app, and it creates the code that uses the elements and synthesizes the events and then the additional validation with XCT assert.</p>
+
+<p></p>
+
+<p>Let's take a look at this UI testing API.</p>
+
+<p></p>
+
+<p>I mentioned earlier that there are three classes.</p>
+
+<p></p>
+
+<p>They are XCUIApplication, XCUIElement, and XCUIElementQuery.</p>
+
+<p></p>
+
+<p>How do they work?</p>
+
+<p></p>
+
+<p>Let's start with a very simple, something even simpler than Brooke's example.</p>
+
+<p></p>
+
+<p>Line-by-line going through here first I am instantiating my application object.</p>
+
+<p></p>
+
+<p>This is a proxy for my application.</p>
+
+<p></p>
+
+<p>Then I launch it.</p>
+
+<p></p>
+
+<p>That brings it up for me.</p>
+
+<p></p>
+
+<p>And then I use element and query to find the add button.</p>
+
+<p></p>
+
+<p>And then I synthesize the event that taps on it.</p>
+
+<p></p>
+
+<p>Finally, I add in an assertion just like Brooke did to make sure that the UI had the expected state at the end of the test.</p>
+
+<p></p>
+
+<p>So I mentioned that UIApplication is a proxy for the tested application.</p>
+
+<p></p>
+
+<p>It is independent of the lifecycle of the launch and termination lifecycle of your app.</p>
+
+<p></p>
+
+<p>Because Your tests are running in a separate process.</p>
+
+<p></p>
+
+<p>You get explicit control over when the app is launched and when it is terminated.</p>
+
+<p></p>
+
+<p>When you launch we will always spawn a new process.</p>
+
+<p></p>
+
+<p>So that's something we do to kind of not give you completely Clean Slate because you have a lot of state in your application that it's up to you to control.</p>
+
+<p></p>
+
+<p>But by launching a process clean each time, we help you minimize the number of variables that you have to deal with in your test.</p>
+
+<p></p>
+
+<p>So if it's already running, calling launch will terminate the previous existing instance.</p>
+
+<p></p>
+
+<p>Application is also the starting point for finding elements.</p>
+
+<p></p>
+
+<p>Let's talk about elements.</p>
+
+<p></p>
+
+<p>XCUIElement, just like Application, is a proxy object, but this time for user interface elements in the tested application.</p>
+
+<p></p>
+
+<p>Elements have types.</p>
+
+<p></p>
+
+<p>Types are like button, or cell, or window, and so forth.</p>
+
+<p></p>
+
+<p>They have what we call identifiers, strings of data that we get from the accessibility system, hich are an identifier or label or title, so forth.</p>
+
+<p></p>
+
+<p>Most of the time you'll find elements using a combination of the type and the label.</p>
+
+<p></p>
+
+<p>For example, if you have a bullton which is add, you'll look for the button type with the identifier add.</p>
+
+<p></p>
+
+<p>Elements form a hierarchy in your application.</p>
+
+<p></p>
+
+<p>The application is the root of a tree.</p>
+
+<p></p>
+
+<p>If you think back to your computer science days you'll remember tree data structures.</p>
+
+<p></p>
+
+<p>With the lister application we have this very simple tree here with the application at the top and we have like the nav bar and the add button.</p>
+
+<p></p>
+
+<p>Groceries label.</p>
+
+<p></p>
+
+<p>So on and so forth.</p>
+
+<p></p>
+
+<p>So each of these is an element that you can reference in your tests.</p>
+
+<p></p>
+
+<p>These are used by queries.</p>
+
+<p></p>
+
+<p>This hierarchy, as well as type and identifier, to find your elements.</p>
+
+<p></p>
+
+<p>Elements, when you work with them in your test, must be unique.</p>
+
+<p></p>
+
+<p>So what does that mean?</p>
+
+<p></p>
+
+<p>Well, every one of these elements is backed by a query.</p>
+
+<p></p>
+
+<p>The query has to resolve to a single instance.</p>
+
+<p></p>
+
+<p>Otherwise when we go to synthesize the events that you tell us to tap but there's multiple buttons that match that, it is not deterministic.</p>
+
+<p></p>
+
+<p>We can't really know what you mean for us to do.</p>
+
+<p></p>
+
+<p>Similarly, if you ask us for a property of the element, we don't know which one did you really mean?</p>
+
+<p></p>
+
+<p>Maybe there wasn't one at all.</p>
+
+<p></p>
+
+<p>So it's important to the queries for the elements to resolve to exactly one match.</p>
+
+<p></p>
+
+<p>If they don't, when you access the element we'll raise a failure for that.</p>
+
+<p></p>
+
+<p>There is one exception to this, which is an API called the exists property on XCUIElement.</p>
+
+<p></p>
+
+<p>This allows you to test for the existence of the element safely.</p>
+
+<p></p>
+
+<p>You can use this as Brooke did to verify that the element had been removed from the UI and you can also use this to handle cases where you have conditional UI that might display in some context.</p>
+
+<p></p>
+
+<p>For example, if you are saving a file to a location where another file already exists, you might get some kind of confirmation sheet.</p>
+
+<p></p>
+
+<p>That wouldn't be present all the time.</p>
+
+<p></p>
+
+<p>Just the case where there's these conflicts.</p>
+
+<p></p>
+
+<p>You can use an exist check for those cases.</p>
+
+<p></p>
+
+<p>Elements are where event synthesis APIs live.</p>
+
+<p></p>
+
+<p>Event synthesis is how we simulate user interaction, and do this at the lowest level of the system so everything goes through the same channels it would when the user interacts.</p>
+
+<p></p>
+
+<p>The APIs for event synthesis are platform-specific with some exceptions.</p>
+
+<p></p>
+
+<p>We have button click, for example in OS X and the corresponding is button tap on iOS.</p>
+
+<p></p>
+
+<p>We have type text which is the same on both platforms and takes a string of text.</p>
+
+<p></p>
+
+<p>XCUIElementQuery is our API for specifying elements.</p>
+
+<p></p>
+
+<p>Queries resolve to collections of accessible elements.</p>
+
+<p></p>
+
+<p>They can only find elements that are visible to Accessibility.</p>
+
+<p></p>
+
+<p>And they will resolve to a set of these.</p>
+
+<p></p>
+
+<p>That means you can get the number of matches using the count property.</p>
+
+<p></p>
+
+<p>And you can also specify distinct elements in that set using subscripting with an identifier or using an element at index API.</p>
+
+<p></p>
+
+<p>We will look at these more in a moment.</p>
+
+<p></p>
+
+<p>So how do queries work?</p>
+
+<p></p>
+
+<p>So I mentioned that element hierarchy.</p>
+
+<p></p>
+
+<p>So the relationships in that hierarchy are one side of how queries work.</p>
+
+<p></p>
+
+<p>The other side is by filtering.</p>
+
+<p></p>
+
+<p>Filtering is taking one set and reducing that set according to certain criteria.</p>
+
+<p></p>
+
+<p>With our lister example again here is how we might express certain relationships, the first of which is descendants.</p>
+
+<p></p>
+
+<p>In this case I'm showing the view.</p>
+
+<p></p>
+
+<p>All the gold cells are its descendents.</p>
+
+<p></p>
+
+<p>On the other hand children is a more restrictive relationship.</p>
+
+<p></p>
+
+<p>It's just the elements that are directly below the element you're querying.</p>
+
+<p></p>
+
+<p>So, the table's children are just the cells.</p>
+
+<p></p>
+
+<p>The final relationship we use is containment.</p>
+
+<p></p>
+
+<p>This happens to be very useful when we have cases where the elements, like the cells, they don't have a lot of data that unique them from each other, but they contain elements which are unique.</p>
+
+<p></p>
+
+<p>For example, the first cell contains the groceries label.</p>
+
+<p></p>
+
+<p>Filtering lets us take things like the element type, or its identifiers, to create queries that filter a previous query.</p>
+
+<p></p>
+
+<p>We can also do this with predicates which will allow us to go beyond the identifiers to look at the values or do partial matching such as "begins with" and that sort of thing.</p>
+
+<p></p>
+
+<p>We combine relationships and the filtering in the APIs and the first of which is descendantsMatchingType.</p>
+
+<p></p>
+
+<p>You can figure out what that does.</p>
+
+<p></p>
+
+<p>It find the descendants that match a certain type.</p>
+
+<p></p>
+
+<p>This turns out to be the most common query you'll use.</p>
+
+<p></p>
+
+<p>Some examples of this are, I can find all the buttons in an application by calling app, descendentsMatchingType button.</p>
+
+<p></p>
+
+<p>Similarly I can find all the cells in a table by telling the table to give me descendentsMatchingType cell, or, another example, with menu items.</p>
+
+<p></p>
+
+<p>This is such a common query that we provide convenience API for every one of these types.</p>
+
+<p></p>
+
+<p>DescendentsMatchingType buttons, becomes just buttons.</p>
+
+<p></p>
+
+<p>DescendentsMatchingType cell becomes just cells, and so on and so forth.</p>
+
+<p></p>
+
+<p>These convenience APIs help make your tests very expressive yet concise.</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>ChildrenMatchingType is the other combination of relationships in filtering.</p>
+
+<p></p>
+
+<p>So in that, that allows us to differentiate between descendants, all the descendants that match a type, and just those that match, that are children.</p>
+
+<p></p>
+
+<p>Again the all buttons example, is app.buttons, if I want to find just the buttons that are children of my nav bar, I can take my nav bar and say childrenMatchingType button.</p>
+
+<p></p>
+
+<p>It is not as common a query, but there are cases where it becomes very useful to differentiate.</p>
+
+<p></p>
+
+<p>Finally, containing type.</p>
+
+<p></p>
+
+<p>This allows us to find elements by describing their descendants.</p>
+
+<p></p>
+
+<p>So in the example we have the cells that are each somewhat anonymous.</p>
+
+<p></p>
+
+<p>They don't have any identifying characteristics, but they do contain unique labels.</p>
+
+<p></p>
+
+<p>Labels are also known as static texts.</p>
+
+<p></p>
+
+<p>So here I can form a cell query which takes the cells and finds the one that is containing the type static text with the identifier groceries.</p>
+
+<p></p>
+
+<p>That will find the first cell for me.</p>
+
+<p></p>
+
+<p>There's also predicate variant for this API.</p>
+
+<p></p>
+
+<p>So those are our three APIs that combine relationships and filtering.</p>
+
+<p></p>
+
+<p>DescendentsMatchingType, childrenMatchingType, containingType, and of course all the convenience APIs for descendentsMatchingType.</p>
+
+<p></p>
+
+<p>The other powerful thing about query is that they can be chained together.</p>
+
+<p></p>
+
+<p>So we can take the output of one query and make it the input of the next, just like you would pipe commands together on a Unix command line.</p>
+
+<p></p>
+
+<p>This is ver powerful, and lets you build up very complex queries, again in a way that is concise and expressive.</p>
+
+<p></p>
+
+<p>So here we have our application and I want to find just the labels in the table.</p>
+
+<p></p>
+
+<p>So I start with the app.</p>
+
+<p></p>
+
+<p>And then I get the tables.</p>
+
+<p></p>
+
+<p>And I ask for static texts and I'm done.</p>
+
+<p></p>
+
+<p>I have those three labels.</p>
+
+<p></p>
+
+<p>So queries are sometimes the end unto themselves.</p>
+
+<p></p>
+
+<p>You want to get the count of the query and maybe assert that you have the right number of items in there.</p>
+
+<p></p>
+
+<p>But often the goal of a query is to find an element.</p>
+
+<p></p>
+
+<p>All of our elements are backed by a query.</p>
+
+<p></p>
+
+<p>To get an element from a query we provide several different choices.</p>
+
+<p></p>
+
+<p>The first is subscripting, which allows us to take a query and then subscript using an identifier.</p>
+
+<p></p>
+
+<p>That would give me back an element which is the groceries label.</p>
+
+<p></p>
+
+<p>It can also do this with element and index.</p>
+
+<p></p>
+
+<p>If I have a set, maybe the rows in the table and I want to iterate over them.</p>
+
+<p></p>
+
+<p>I could one at a time call element and index on these.</p>
+
+<p></p>
+
+<p>If I have a query which I know resolves uniquely, hat is to a single thing, maybe I only have one navigation bar in my application, I can use the element property to create a new element backed by that query.</p>
+
+<p></p>
+
+<p>So when are queries evaluated?</p>
+
+<p></p>
+
+<p>So they are not actually evaluated just when you create them.</p>
+
+<p></p>
+
+<p>They are evaluated on-demand or as they are needed.</p>
+
+<p></p>
+
+<p>This means that with an element, the query will be evaluated when you synthesize events or read property values.</p>
+
+<p></p>
+
+<p>You can create the element but until you use it, the query won't be evaluated.</p>
+
+<p></p>
+
+<p>Similarly if you create a query directly it will be evaluated when you get the number of matches or if you call one of the APIs that returns all the matches.</p>
+
+<p></p>
+
+<p>It will have to be evaluated at that point and we will reevaluate queries when the UI changes.</p>
+
+<p></p>
+
+<p>So you are always working with the most current view of the application rather than data from ten seconds ago or two minutes ago, depending on the length of your test.</p>
+
+<p></p>
+
+<p>So in this way you can think of queries and elements being somewhat similar to URLs.</p>
+
+<p></p>
+
+<p>They are, with a URL you can create a URL but it doesn't fetch a resource immediately.</p>
+
+<p></p>
+
+<p>It is not until you actually go to create your URL request or session that the actual URL gets resolved.</p>
+
+<p></p>
+
+<p>And so even if the URL was invalid, no error would be raised until that point.</p>
+
+<p></p>
+
+<p>Similarly, queries and elements, they are just specifications for accessible elements in the tested application.</p>
+
+<p></p>
+
+<p>So creating them doesn't do anything until you need them and at that point they are resolved.</p>
+
+<p></p>
+
+<p>So that's the API.</p>
+
+<p></p>
+
+<p>There's three classes: The application for launching your application; elements, which like the application are proxy objects for elements in your app; and finally queries, which are more complex ways to specify elements.</p>
+
+<p></p>
+
+<p>So now I want to talk a little bit about Accessibility and UI testing.</p>
+
+<p></p>
+
+<p>I mentioned earlier that accessibility data is what makes UI testing possible.</p>
+
+<p></p>
+
+<p>So given that, it is not hard to see how the quality of the accessibility data really impacts your testing.</p>
+
+<p></p>
+
+<p>In fact, the better the accessibility data for your application, the easier it is to write tests and the more reliable those tests are over time.</p>
+
+<p></p>
+
+<p>So you get a double benefit when you improve the accessibility in your application.</p>
+
+<p></p>
+
+<p>You've not only made it easier for your own testing but you've improved the experience for all of our disabled users.</p>
+
+<p></p>
+
+<p>I would really encourage you to keep that in mind when you work with UI testing and accessibility.</p>
+
+<p></p>
+
+<p>Sometimes up's need to do some debugging.</p>
+
+<p></p>
+
+<p>It's an element may not be accessible, may not be showing up for you even when you are using recording.</p>
+
+<p></p>
+
+<p>That could be because of the custom view subclass that may not be accessible by default.</p>
+
+<p></p>
+
+<p>Or it's actually not a view.</p>
+
+<p></p>
+
+<p>It's a graphics object in a lower level graphics subsystem such as a layer and that sort of thing.</p>
+
+<p></p>
+
+<p>In other cases, the element is visible but has poor accessibility data.</p>
+
+<p></p>
+
+<p>All those table cells I was looking at in the containment query, partly that might have gone away if the cells themselves had better accessibility data.</p>
+
+<p></p>
+
+<p>When this happens, there's a couple tools I would point you at.</p>
+
+<p></p>
+
+<p>The first of which is UI recording itself because UI recording will give you the closest view into how the testing system sees the elements.</p>
+
+<p></p>
+
+<p>But beyond that there's also great accessibility inspectors on our platform.</p>
+
+<p></p>
+
+<p>They'll let you see the raw accessibility data as it is exposed by the application.</p>
+
+<p></p>
+
+<p>When you need to go and improve that data, your first stop should be Interface Builder.</p>
+
+<p></p>
+
+<p>Interface Builder has a great accessibility inspector which allows you to enable or disable accessibility, set values for the various accessibility attributes, and configure the traits which have a direct impact on how the element is expressed as a type in UI testing.</p>
+
+<p></p>
+
+<p>There's also API if you're working with elements that you can't access through Interface Builder.</p>
+
+<p></p>
+
+<p>You can use APIs in NSAccessibility and UIAccessibility to directly control how the element is expressed to Accessibility.</p>
+
+<p></p>
+
+<p>So with that in mind, let's see another demo.</p>
+
+<p></p>
+
+<p>This time Brooke is going to take us through more complex test cases and also a little bit of accessibility debugging.</p>
+
+<p></p>
+
+<p>Brooke?</p>
+
+<p></p>
+
+<p>BROOKE CALLAHAN: Thanks, Wil.</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>BROOKE CALLAHAN: So in the last demo we saw adding a test that can add and remove an item from the list.</p>
+
+<p></p>
+
+<p>So while I'm here I would like to add some more tests around this area of user interface.</p>
+
+<p></p>
+
+<p>First I'm going to add a test that adds multiple items to the same list.</p>
+
+<p></p>
+
+<p>With this multiple items with the same name to a list.</p>
+
+<p></p>
+
+<p>So to do that I'm going to copy this code here from the last test.</p>
+
+<p></p>
+
+<p>And I'll call this new test, add to cookies.</p>
+
+<p></p>
+
+<p>I'll just paste that code in.</p>
+
+<p></p>
+
+<p>Great. Now I have a test that is going to tap on the groceries label.</p>
+
+<p></p>
+
+<p>Next it is going to add the new cookies item to the list, and then it is going to tap on that cookies button in that item, and verify that it actually gets to that tapped state.</p>
+
+<p></p>
+
+<p>So to add the second item I'm just going to copy this code here.</p>
+
+<p></p>
+
+<p>And then to verify that the new button exists and gets tapped, I'm going to copy that section.</p>
+
+<p></p>
+
+<p>So let's run this test and see how that works.</p>
+
+<p></p>
+
+<p>Now let's add the first one.</p>
+
+<p></p>
+
+<p>Second one.</p>
+
+<p></p>
+
+<p>Ahh, failed an assertion here.</p>
+
+<p></p>
+
+<p>So on this line here, where we are getting the value of the cookies button for the second time around, we are actually failing the assertion.</p>
+
+<p></p>
+
+<p>Looks like it's failing because multiple matches are found.</p>
+
+<p></p>
+
+<p>I think I have an idea of what went wrong here.</p>
+
+<p></p>
+
+<p>The way that the cookies button constant is specified, it is just looking for all the buttons in the table, and giving me one that's called cookies.</p>
+
+<p></p>
+
+<p>By this point in the test, there are two buttons called cookies in the table.</p>
+
+<p></p>
+
+<p>It will find both of them and there is not going to be one value that the element can return because there's these two matches.</p>
+
+<p></p>
+
+<p>Now, I only know that because I just saw the test running.</p>
+
+<p></p>
+
+<p>Normally you are not going to be watching your test as it runs.</p>
+
+<p></p>
+
+<p>So we thought we should provide a way for you to see what the test looks like when it last ran and we've added this information to the test reports in Xcode.</p>
+
+<p></p>
+
+<p>So if I go to the report navigator and click on the most recent test report, you can see the test add to cookies test.</p>
+
+<p></p>
+
+<p>If I expand this item, you can see all of the activities that happen during the test.</p>
+
+<p></p>
+
+<p>And down here I see this last find the cookies button item.</p>
+
+<p></p>
+
+<p>There's my failure.</p>
+
+<p></p>
+
+<p>Multiple matches found.</p>
+
+<p></p>
+
+<p>There's also a quick look button here, where I can look on that and it will show me the exact state of the application when that happened.</p>
+
+<p></p>
+
+<p>Just like we know happened, yeah, there's two rows called cookies.</p>
+
+<p></p>
+
+<p>One of them is tapped and one of them is not tapped.</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>BROOKE CALLAHAN: I am going to close that and if I want to see the complete assertion failure, I can go to the log section and on this line I can expand the log for that test.</p>
+
+<p></p>
+
+<p>And here we can see the complete assertion failure showing the accessibility hierarchy of both those buttons.</p>
+
+<p></p>
+
+<p>And here on the side I can see that yeah, there's one button that is unchecked and the other one is checked, just like I expect.</p>
+
+<p></p>
+
+<p>Let's go back and fix that test.</p>
+
+<p></p>
+
+<p>The easiest way for me to fix this test is to use recording again.</p>
+
+<p></p>
+
+<p>I'll set a breakpoint on this line right before the assertion failure, and run the test at that point.</p>
+
+<p></p>
+
+<p>All right.</p>
+
+<p></p>
+
+<p>So now I've got the application in exactly the state I need it to be to get the value of that unchecked button.</p>
+
+<p></p>
+
+<p>All I'm going to do is I'm going to click on recording, tap on that button, and stop recording.</p>
+
+<p></p>
+
+<p>Now I have a way to refer to that second button.</p>
+
+<p></p>
+
+<p>I'm going to clean this up by using the table constant in both.</p>
+
+<p></p>
+
+<p>I'm going to call this cookies button two, a new constant in my test.</p>
+
+<p></p>
+
+<p>And now to fix the test I'm going to change each of the next three lines to use that new reference.</p>
+
+<p></p>
+
+<p>And when I run the test again, we should see that it works.</p>
+
+<p></p>
+
+<p>Great!</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>All right.</p>
+
+<p></p>
+
+<p>Now I've got one test that can add and remove an item from the list and another test that can add two items to the same list, and verify they both exist.</p>
+
+<p></p>
+
+<p>Now I want to build a test that will remove all the items from the list.</p>
+
+<p></p>
+
+<p>Once again I'm going to use recording.</p>
+
+<p></p>
+
+<p>I am going to tap on groceries, edit, and then I'm going to remove the apples row from the test.</p>
+
+<p></p>
+
+<p>All right?</p>
+
+<p></p>
+
+<p>I'll tap stop recording.</p>
+
+<p></p>
+
+<p>So all this much of the test is pretty much how I want, but what I want to do is, I want to make my test agnostic to the data of the application.</p>
+
+<p></p>
+
+<p>I want it to remove all these items, but I don't want it to actually refer to the items by their labels.</p>
+
+<p></p>
+
+<p>Because that is going to get kind of wordy here.</p>
+
+<p></p>
+
+<p>So first thing I'm going to do, you see these tokens here, the tokens provide multiple ways to get to the same UI element.</p>
+
+<p></p>
+
+<p>In this case, for that first delete apples button, I can get to this by calling table.button delete apples.</p>
+
+<p></p>
+
+<p>I can be more specific and say it's the delete apples button in the cell called apples.</p>
+
+<p></p>
+
+<p>So I'm going to use that.</p>
+
+<p></p>
+
+<p>And I'm going to double click on it to convert it to text.</p>
+
+<p></p>
+
+<p>So now I've got two rows here where we are getting the elements the same way.</p>
+
+<p></p>
+
+<p>What I would like to do is get the cell simply by index.</p>
+
+<p></p>
+
+<p>I will add a constant called let cell, table., and set this equal to table.cells elements index.</p>
+
+<p></p>
+
+<p>Since the apples row was index one, I'm going to use that.</p>
+
+<p></p>
+
+<p>I can simply replace these with the reference to that constant.</p>
+
+<p></p>
+
+<p>All right.</p>
+
+<p></p>
+
+<p>I'm almost done.</p>
+
+<p></p>
+
+<p>The next part I need to change here is how I'm getting the button out of the cell because the other rows are not going to have a delete apples button.</p>
+
+<p></p>
+
+<p>They will have a delete oranges button or delete bread.</p>
+
+<p></p>
+
+<p>What I need is a way to find the button where the label starts with the word delete.</p>
+
+<p></p>
+
+<p>To do that I'm going to use a predicate.</p>
+
+<p></p>
+
+<p>So here I'm using matching predicate to find the button whose label begins with the word delete.</p>
+
+<p></p>
+
+<p>All right.</p>
+
+<p></p>
+
+<p>So the last thing I need to change here, I want to add an assertion just like before.</p>
+
+<p></p>
+
+<p>I want to verify that that cell goes away after we've removed it.</p>
+
+<p></p>
+
+<p>I am going to use XCTAssertEqual, and assert that the cells exist property returns false after we tap that delete confirmation button.</p>
+
+<p></p>
+
+<p>I'm going to run the test now.</p>
+
+<p></p>
+
+<p>It is removing the apples row but failed the assertion.</p>
+
+<p></p>
+
+<p>I have an idea what might be going on here.</p>
+
+<p></p>
+
+<p>To show you what is going on I'll use the debugger.</p>
+
+<p></p>
+
+<p>I'll set a breakpoint here and run the test again, to that same breakpoint.</p>
+
+<p></p>
+
+<p>All right.</p>
+
+<p></p>
+
+<p>Now in the debugger, I'm going to call debug description on the cell.</p>
+
+<p></p>
+
+<p>So the debug description has a lot of information about how the cell is actually resolved.</p>
+
+<p></p>
+
+<p>So I can see here that when I call it, this cell result first finds the application and then it finds the table in the application.</p>
+
+<p></p>
+
+<p>Then all the cells.</p>
+
+<p></p>
+
+<p>And then the element and index in those cells.</p>
+
+<p></p>
+
+<p>I can see that it's actually finding the oranges row.</p>
+
+<p></p>
+
+<p>It looks like what might be happening here is when we call the exist property on this element called cell, it is actually re-resolving itself.</p>
+
+<p></p>
+
+<p>Even though we just removed the apples row from the table there's now a new cell at index one.</p>
+
+<p></p>
+
+<p>So that is no problem.</p>
+
+<p></p>
+
+<p>It just means I need to use a different way to find out whether or not we've removed the row.</p>
+
+<p></p>
+
+<p>So I'm going to add an assertion, assert that the number of cells in the table goes down at this point.</p>
+
+<p></p>
+
+<p>So I'm going to add a new constant called "count" and I'll set this equal to the count of the cells in the table.</p>
+
+<p></p>
+
+<p>And then I'll simply assert that that's equal to count minus 1.</p>
+
+<p></p>
+
+<p>Now, the last thing I need to do, I said this was going to be a remove all items test.</p>
+
+<p></p>
+
+<p>I'm going to change it to add a wild loop and simply do this over and over again as long as there's more than one cell in the table.</p>
+
+<p></p>
+
+<p>Let's run that.</p>
+
+<p></p>
+
+<p>So it's removing the apples row, and oranges.</p>
+
+<p></p>
+
+<p>All right.</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>BROOKE CALLAHAN: Last thing I would like to do is add a test to use that color row that we saw in the edit UI.</p>
+
+<p></p>
+
+<p>And once again I'm going to use the recorder for this.</p>
+
+<p></p>
+
+<p>I'll tap on groceries and edit.</p>
+
+<p></p>
+
+<p>Now, the color UI here lets me change the color for a list.</p>
+
+<p></p>
+
+<p>It looks like right now this list is green.</p>
+
+<p></p>
+
+<p>So I'll try changing it to red or how about blue?</p>
+
+<p></p>
+
+<p>Okay, so when I tap on those buttons it looks like it's not actually recording what I want.</p>
+
+<p></p>
+
+<p>It looks like it's recording a tap on the static text called color, which you see over here.</p>
+
+<p></p>
+
+<p>So I think what might be going on here is that these UI elements simply might not be visible to Accessibility.</p>
+
+<p></p>
+
+<p>So I'm going to stop recording, and I can actually use the accessibility inspector to tell me what's going on.</p>
+
+<p></p>
+
+<p>I'll right click on Xcode and go to open developer tool, accessibility inspector.</p>
+
+<p></p>
+
+<p>And the accessibility inspector provides a lot of information, but all I want to use it for is ths shortcut, command S7.</p>
+
+<p></p>
+
+<p>It will highlight the UI element that's underneath the mouse cursor.</p>
+
+<p></p>
+
+<p>If I put the mouse cursor over the word bread here, and press command F7.</p>
+
+<p></p>
+
+<p>it highlights bread.</p>
+
+<p></p>
+
+<p>If I put it over the delete bread button, you can see that it highlights that.</p>
+
+<p></p>
+
+<p>Now, let's see what happens if I put the mouse cursor over this yellow color button.</p>
+
+<p></p>
+
+<p>Aha! So it highlighted the whole row.</p>
+
+<p></p>
+
+<p>So that pretty much confirms that this UI element is simply not visible to accessibility.</p>
+
+<p></p>
+
+<p>Luckily I can actually change this, and fix this problem using the story board.</p>
+
+<p></p>
+
+<p>I'll open the story board now.</p>
+
+<p></p>
+
+<p>So here I've got the same buttons in my story board and if I open the inspector, here I can see that these buttons actually have a class of color tappable view.</p>
+
+<p></p>
+
+<p>I'm familiar with this class.</p>
+
+<p></p>
+
+<p>I know it's actually not UI button.</p>
+
+<p></p>
+
+<p>It's custom view.</p>
+
+<p></p>
+
+<p>If I go down to the accessibility part of the inspector, I can see it's not enabled for them.</p>
+
+<p></p>
+
+<p>I have gone through and added labels for them.</p>
+
+<p></p>
+
+<p>To fix this all I need to do is select all of the buttons.</p>
+
+<p></p>
+
+<p>And then I'll check the enabled for accessibility check box.</p>
+
+<p></p>
+
+<p>Since they behave like buttons, I am going to give these the button trait.</p>
+
+<p></p>
+
+<p>All right?</p>
+
+<p></p>
+
+<p>Now let's run the application again.</p>
+
+<p></p>
+
+<p>And now I'm going to record this test one more time.</p>
+
+<p></p>
+
+<p>Tap on groceries and edit.</p>
+
+<p></p>
+
+<p>Then red. And orange.</p>
+
+<p></p>
+
+<p>Yellow, green, blue, and gray.</p>
+
+<p></p>
+
+<p>Great. Now it actually recorded all those.</p>
+
+<p></p>
+
+<p>I'll stop recording and let's run it and see if it can play it back as well.</p>
+
+<p></p>
+
+<p>Great. I've fixed accessibility in my application.</p>
+
+<p></p>
+
+<p>And I've also made it more testable.</p>
+
+<p></p>
+
+<p>If I was going to complete this test, I would probably add some assertions to verify that the state of these buttons changes.</p>
+
+<p></p>
+
+<p>For now, I'll hand the stage back to Wil.</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>WIL TURNER: So that's really quite awesome, especially just how easy it was to make this view that previously a Voice Over user would have had no luck with at all and just with a few quick changes in interface builder Brooke was able to make that both accessible and UI testable.</p>
+
+<p></p>
+
+<p>So in the demo, some sort of more advanced UI testing.</p>
+
+<p></p>
+
+<p>You saw he had cases where he dealt with a conflict and a query, and how to correct those queries, and how to debug it, and also how he can loop over elements and validate them, and how you can use the exists property and also highlighted how queries are reevaluated.</p>
+
+<p></p>
+
+<p>They use the criteria that you created them with.</p>
+
+<p></p>
+
+<p>That specification is what gets reevaluated.</p>
+
+<p></p>
+
+<p>We used element at index one.</p>
+
+<p></p>
+
+<p>That pointed to the apples label the first time through.</p>
+
+<p></p>
+
+<p>As soon as that was gone and the UI changed, now that was pointing to the oranges label.And then finally, how to improve accessibility, and the rewards are truly fantastic for doing that.</p>
+
+<p></p>
+
+<p>Brooke also gave you a peek at the test reports.</p>
+
+<p></p>
+
+<p>We have done some work in Xcode 7 to overhaul them for UI testing.</p>
+
+<p></p>
+
+<p>To recap are, the test reports are where you see the results for all the tests that ran.</p>
+
+<p></p>
+
+<p>It shows the pass or the fail, the failure message, performance metrics for performance tests are shown in the reports.</p>
+
+<p></p>
+
+<p>You get the same UI in XCode and in Xcode server.</p>
+
+<p></p>
+
+<p>It's a consistent experience regardless of whether you are looking at integrations or the run that you just did on your local computer.</p>
+
+<p></p>
+
+<p>On Xcode server you also get per-device results, because you can have the devices integrating multiple devices at the same time.</p>
+
+<p></p>
+
+<p>The additions for UI testing, we collected additional data during UI testing, and this includes screen shots.</p>
+
+<p></p>
+
+<p>You saw how it helped Brooke debug the conflict in his query by pulling up the screen shot at the time that query failed.</p>
+
+<p></p>
+
+<p>Also, we organized the API calls into these nested activities that help you understand how the API call is working.</p>
+
+<p></p>
+
+<p>So let's take a look at an example of this.</p>
+
+<p></p>
+
+<p>This is not the list draft.</p>
+
+<p></p>
+
+<p>It is a different application.</p>
+
+<p></p>
+
+<p>But I'm going to show you how there are several steps in the nested activities breakdown.</p>
+
+<p></p>
+
+<p>This example we're typing into a test field so the high level you call the API type test.</p>
+
+<p></p>
+
+<p>But internally that breaks down.</p>
+
+<p></p>
+
+<p>In the first step where we wait for the application to idle.</p>
+
+<p></p>
+
+<p>We're actually observing the main run loop of the tested application.</p>
+
+<p></p>
+
+<p>Because We don't want to send events to it, when it's busy processing.</p>
+
+<p></p>
+
+<p>We want it to be responsive as possible.</p>
+
+<p></p>
+
+<p>Once it's idled we capture the data we need from Accessibility and we resolve the query, make sure it matches exactly one thing.</p>
+
+<p></p>
+
+<p>Next step, we synthesize the actual events that insert the text into that field.</p>
+
+<p></p>
+
+<p>Finally, we wait one more time for the app to idle afterwards.</p>
+
+<p></p>
+
+<p>Because, again, we want to hand off control in a way where things are reliable and deterministic.</p>
+
+<p></p>
+
+<p>The quick looks are provided for screen shots that are captured during critical steps.</p>
+
+<p></p>
+
+<p>You can see here is the state right after I type that text in.</p>
+
+<p></p>
+
+<p>Make sure everything looked just the way you expected.</p>
+
+<p></p>
+
+<p>So UI testing is obviously a huge expansion of the kind of testing you can do for your applications.</p>
+
+<p></p>
+
+<p>So when do you use it, right?</p>
+
+<p></p>
+
+<p>We've got unit testing already.</p>
+
+<p></p>
+
+<p>UI testing is a complement to UI testing, not a replacement.</p>
+
+<p></p>
+
+<p>You should continue to use unit testing for your model objects, and your controller logic, because unit testing will more precisely pinpoint failures when they happen in your code.</p>
+
+<p></p>
+
+<p>UI testing allows you to cover much broader ranges of functionality, but tracking down the failures can be more challenging.</p>
+
+<p></p>
+
+<p>It's a balance in your project, of finding the right blend between unit testing and UI testing.</p>
+
+<p></p>
+
+<p>Some great candidates for UI testing.</p>
+
+<p></p>
+
+<p>Well, think about your app.</p>
+
+<p></p>
+
+<p>You have customers, you show it to them, and you have little demo sequences that you show to them, and you walk them through, "well, here's how you do this with the app."</p>
+
+<p></p>
+
+<p>Demo sequences are great candidates for UI testing.</p>
+
+<p></p>
+
+<p>You'll know nightly build after nightly build that those demos are going to work for you.</p>
+
+<p></p>
+
+<p>Second, beyond that, common workflows.</p>
+
+<p></p>
+
+<p>What the app is used for, if it's an editing app, how you edit the documents.</p>
+
+<p></p>
+
+<p>Any custom views you have in the application.</p>
+
+<p></p>
+
+<p>And finally document-based workflows, opening and saving.</p>
+
+<p></p>
+
+<p>These are all great things to automate.</p>
+
+<p></p>
+
+<p>They are really hard to capture with unit testing.</p>
+
+<p></p>
+
+<p>When they go wrong they have a huge impact on users.</p>
+
+<p></p>
+
+<p>So UI testing.</p>
+
+<p></p>
+
+<p>New in XCode 7.</p>
+
+<p></p>
+
+<p>Opens up a world of possibilities for how you can test your applications.</p>
+
+<p></p>
+
+<p>In UI testing you find and interact with user interface elements and you synthesize events that drives them, just the way a user does.</p>
+
+<p></p>
+
+<p>You can validate the UI properties and state.</p>
+
+<p></p>
+
+<p>And UI recording lets you create these tests super quick, super easy.</p>
+
+<p></p>
+
+<p>Finally, we've overhauled the test reports to make you better able to understand how your tests work and collect additional data about them.</p>
+
+<p></p>
+
+<p>So that's UI testing.</p>
+
+<p></p>
+
+<p>[Applause]</p>
+
+<p></p>
+
+<p>WIL TURNER: So for more information we've got great documentation on XCTest.</p>
+
+<p></p>
+
+<p>You can get to it through Xcode itself and on our website.</p>
+
+<p></p>
+
+<p>And Accessibility also has great documentation, and I encourage you to check out.</p>
+
+<p></p>
+
+<p>Developer Forums are great places to raise questions and trade tips with other users about how you're using things.</p>
+
+<p></p>
+
+<p>Our evangelist Stefan Lesser is a great contact to get you started.</p>
+
+<p></p>
+
+<p>There's some related sessions if you want to dial back in time and watch the accessibility session from yesterday morning, probably watch the video on your lunch if you want, and continuous integration and code coverage, new technology in Xcode server, you can see tomorrow afternoon tomorrow morning.</p>
+
+<p></p>
+
+<p>Have great conference, everybody.</p>
+
+</body>
+</html>
