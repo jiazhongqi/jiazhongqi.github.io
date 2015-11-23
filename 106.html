@@ -1,0 +1,990 @@
+<!DOCTYPE HTML>
+<html>
+    <body>
+
+
+
+<h1>
+<p>Session 106 WWDC 2015</p>
+What's New in Swift 
+</h1>
+
+<p></p>
+<p>Swift continues its rapid advancement with version 2. New optimizations make your app run even faster, and new syntax makes your code more expressive. Learn about powerful new features like error handling, testability, and availability checking. This session will help you write even better apps by moving to Swift 2.</p>
+<p></p>
+<p>CHRIS LATTNER: Welcome to What's New in Swift.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>I'm Chris Lattner.</p>
+<p></p>
+<p>I'll start off this talk and my colleague John McCall will take you through the second half to take you through what's new.</p>
+<p></p>
+<p>Before we get going, I thought it would be interesting or helpful to look at what we're trying to do here.</p>
+<p></p>
+<p>What are the goals and what are the philosophies behind Swift 2?</p>
+<p></p>
+<p>We had three big things we were going for.</p>
+<p></p>
+<p>First, fundamentals.</p>
+<p></p>
+<p>We want the core features and the core behavior of the language and the tools to be great.</p>
+<p></p>
+<p>A lot of this is taking a look at the feedback that many of you have produced in the process of using Swift.</p>
+<p></p>
+<p>So a lot of what this is is I want to thank you for all the feedback you have.</p>
+<p></p>
+<p>You guys are continuing to shape Swift through all the great feedback the producers have that use it.</p>
+<p></p>
+<p>Second up is safety.</p>
+<p></p>
+<p>Safety is a core value of Swift.</p>
+<p></p>
+<p>We really want it to be easy to write safe code by default, and we think that the new availability in error handling constructs will be a great new way to do this.</p>
+<p></p>
+<p>Third, beauty.</p>
+<p></p>
+<p>We want your code to be beautiful.</p>
+<p></p>
+<p>As programmers, we work with code all the time.</p>
+<p></p>
+<p>This is quite important to us.</p>
+<p></p>
+<p>We have added new things to Swift making it easier to write more beautiful and natural code.</p>
+<p></p>
+<p>Today we'll talk about five new things in Swift.</p>
+<p></p>
+<p>Before we get diving into what's new in Swift 2, I think it is important to point out that Swift 1.2 was also a huge update.</p>
+<p></p>
+<p>It was released just three months ago.</p>
+<p></p>
+<p>Because of time limitations, we don't have time to talk about it much.</p>
+<p></p>
+<p>But if you're interested and you haven't seen it already, check out the Swift programming language book and the Xcode 6 release notes.</p>
+<p></p>
+<p>Let's dive in and talk about fundamentals.</p>
+<p></p>
+<p>Fundamentals is about refining the core behavior of the language and how it works together.</p>
+<p></p>
+<p>So there are a lot of little things here.</p>
+<p></p>
+<p>This will feel like a bit of a random walk, but stick with me.</p>
+<p></p>
+<p>We'll start off with enums.</p>
+<p></p>
+<p>Enums are one of Swift's best features.</p>
+<p></p>
+<p>Here I have an enum enumerating some common household pets.</p>
+<p></p>
+<p>Enums are great because they're simple to define and use.</p>
+<p></p>
+<p>On the other hand, if you have played with them in a playground or printed one out, you may have been left wanting for more.</p>
+<p></p>
+<p>In Swift 2, enums now carry enough reflection information that you can print them, and they work great.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>CHRIS LATTNER: Next, associated values.</p>
+<p></p>
+<p>Enums are also great because they're the perfect model for discriminated union, which is great when you have two values of different types that you want to store in one thing.</p>
+<p></p>
+<p>Right? Associated values are very powerful, maybe you went and tried to write the obvious thing in either type.</p>
+<p></p>
+<p>This is a perfect way to model this, but when you went to use it, you got something depressing like this.</p>
+<p></p>
+<p>Well, this has been very sad, and none of us like this.</p>
+<p></p>
+<p>Now with Swift 2 it just works.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>CHRIS LATTNER: Let's talk about recursion.</p>
+<p></p>
+<p>Enums in Swift are actually algebraic data types, and in other languages, recursive algebraic data types are really powerful.</p>
+<p></p>
+<p>You can do some really great things.</p>
+<p></p>
+<p>The problem is in Swift, the values in an enum are stored inline.</p>
+<p></p>
+<p>This means if you have a recursive enum, it has an infinite size, which is hard for our current devices to hold.</p>
+<p></p>
+<p>Maybe next year.</p>
+<p></p>
+<p>There are workarounds for this.</p>
+<p></p>
+<p>Everybody has seen probably the box-type that you can turn into a reference, but that breaks pattern matching, it is ugly and horrible.</p>
+<p></p>
+<p>With Swift 2, there is a better way.</p>
+<p></p>
+<p>It didn't quite make it into beta 1, but coming soon you'll be able to mark your cases indirect allowing you to express this naturally, and pattern matching works great.</p>
+<p></p>
+<p>Let's move on and talk about scoping [applause].</p>
+<p></p>
+<p>CHRIS LATTNER: So sometimes you have a name that you want to reuse or maybe a resource that you want to make sure is released early.</p>
+<p></p>
+<p>We have introduced a new Do statement allowing you to introduce an explicit scope.</p>
+<p></p>
+<p>In this case, we all have to deal with Internet trolls now and then, but we try to keep them bound as tightly as possible.</p>
+<p></p>
+<p>Do is really important when we bring up error handling later in the talk.</p>
+<p></p>
+<p>But taking Do as a keyword led to some potential ambiguity.</p>
+<p></p>
+<p>It's not ambiguity for the compiler; it's ambiguity as we read code.</p>
+<p></p>
+<p>You don't always see the bottom of a big, long statement, and we have a Do While loop.</p>
+<p></p>
+<p>To make it superclear by just looking at the introducer for a statement of what it does, we want to make it superclear, what something does by looking at the introducer keyword for the statement.</p>
+<p></p>
+<p>So we have taken the Do While loop and renamed it to Repeat.</p>
+<p></p>
+<p>You can immediately tell from the top it that it is a loop, making it really easy [applause].</p>
+<p></p>
+<p>CHRIS LATTNER: Let's talk about option sets.</p>
+<p></p>
+<p>Option sets are a lightweight, superefficient way to represent a set of Booleans.</p>
+<p></p>
+<p>You may have seen them if you've worked with various Cocoa APIs, and you use the see the See Like syntax to Or them together.</p>
+<p></p>
+<p>The basic syntax like this is actually pretty nice.</p>
+<p></p>
+<p>The problem is, when you get to the other syntaxes you end up using, it is a bit less nice.</p>
+<p></p>
+<p>You create an empty-option set with nil it doesn't make sense because option sets and optionals are completely different concepts and they're conflated together.</p>
+<p></p>
+<p>You extract them with bitwise operations, which is a pain and super error-prone, and you can get it wrong easily.</p>
+<p></p>
+<p>With Swift 2 we have taken the option sets this is even worse, because Swift 1.2 had a first-class set type, and now the combination of all of this makes option sets seem like an archaic throwback to C, which they are [laughter].</p>
+<p></p>
+<p>CHRIS LATTNER: But Swift 2 solves this.</p>
+<p></p>
+<p>It makes option sets set-like.</p>
+<p></p>
+<p>That means option sets and sets are now formed with square brackets.</p>
+<p></p>
+<p>That means you get empty sets with an empty set of square brackets, and you get the full set of standard set API to work with option sets.</p>
+<p></p>
+<p>It is supereasy and great.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>CHRIS LATTNER: Now, it is also nice because you can define your own option sets in an easier way now.</p>
+<p></p>
+<p>Now all you have to do is define your own set type, or struct type, struct type for your set, and have it conform to the new option set type protocol, find storage to hold your bits, and define the elements you want for your option set.</p>
+<p></p>
+<p>With just a simple definition, you now get all the syntax we talked about.</p>
+<p></p>
+<p>The thing that's supercool about this, it doesn't require any compiler matching.</p>
+<p></p>
+<p>This is done automatically through a new feature called Default Implementations and Protocols provided by option set type.</p>
+<p></p>
+<p>We don't have time to talk about Default Implementations and Protocols in detail here, but we have a session talking about protocols going into it deeply.</p>
+<p></p>
+<p>It is great.</p>
+<p></p>
+<p>Let's talk about functions and methods.</p>
+<p></p>
+<p>Swift unifies functions and methods together into a single func declaration.</p>
+<p></p>
+<p>This is a great thing that pulls two disparate concepts together in the type system into a beautiful functional core.</p>
+<p></p>
+<p>This beautiful functional core is a key part of Swift that immediately falls apart when you try to call these things because they take different argument labels.</p>
+<p></p>
+<p>This has been a huge pain for a lot of people.</p>
+<p></p>
+<p>If we look at where this came from, Swift was following the precedent of Objective-C.</p>
+<p></p>
+<p>C doesn't have argument labels, argument labels are superimportant for methods in Objective-C, and Swift followed.</p>
+<p></p>
+<p>With Swift 2, we fixed this and more.</p>
+<p></p>
+<p>Now functions and methods have the same declaration syntax, and they work the same way.</p>
+<p></p>
+<p>Now when you call a global function, you provide argument labels by default.</p>
+<p></p>
+<p>Everything is uniform.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>CHRIS LATTNER: So the key thing to know here is that this affects pure Swift code.</p>
+<p></p>
+<p>If you declare a global function in Swift, you get this behavior by default.</p>
+<p></p>
+<p>Functions imported from C continue to behave in the same way they always have because argument names in C functions are not part of API and are not thought about as API.</p>
+<p></p>
+<p>But we like Swift code going forward to include argument labels on functions.</p>
+<p></p>
+<p>If you look deeper in what's going on here, there is even more.</p>
+<p></p>
+<p>Swift functions take parameters, parameters can have two different names for each value.</p>
+<p></p>
+<p>So when you declare something with the syntax, you're actually getting a default behavior.</p>
+<p></p>
+<p>The two names that a parameter can get are an external name that the caller sees and the internal name that the implementation sees.</p>
+<p></p>
+<p>By default that first argument has no label shown to the external client of it and has a name you're probably using when you implement the method.</p>
+<p></p>
+<p>Likewise, the second and later arguments all default to being the same inside and outside.</p>
+<p></p>
+<p>And that's why you see this behavior of having an argument label for that argument.</p>
+<p></p>
+<p>The great thing about this model is that when you understand this, you can customize it.</p>
+<p></p>
+<p>For example, in this case, it would make sense to have a label on that first argument so you know what it is.</p>
+<p></p>
+<p>You can do that simply by duplicating that argument name.</p>
+<p></p>
+<p>It is simple.</p>
+<p></p>
+<p>Similarly, if you want to remove something, you can explicitly set the name of that to the underscore to say remove this argument label.</p>
+<p></p>
+<p>In doing so, we have committed one of the most heinous naming crimes imaginable by having a Boolean without a label.</p>
+<p></p>
+<p>Go me! The even better thing, this whole change, this makes labels much more prominent in the system.</p>
+<p></p>
+<p>This is great for having APIs that are friendly to use and means that we can simplify away a ton of complexity.</p>
+<p></p>
+<p>So now functions and methods work the same, but we can also get rid of special rules for the default arguments and there is the weird pound syntax, nobody remembered what it did, so now that's gone too.</p>
+<p></p>
+<p>It is much better.</p>
+<p></p>
+<p>We'll talk about the compiler and talk about the warnings and the error messages compiled by the compiler.</p>
+<p></p>
+<p>Here is code that's reasonable code, maybe you have written something like this before, where I'm trying to update a point.</p>
+<p></p>
+<p>If you gave this a Swift 1 compiler, it would produce something like this.</p>
+<p></p>
+<p>I don't know about you, but that's not helping much.</p>
+<p></p>
+<p>Swift 1.2 made this better.</p>
+<p></p>
+<p>Swift 1.2 made the error message actually tell me that there is a problem.</p>
+<p></p>
+<p>Now I see that indeed I cannot assign to this.</p>
+<p></p>
+<p>Of course, this is not good enough either.</p>
+<p></p>
+<p>We have continued to invest in the error messages and warnings produced by the compiler, and in Swift 2 it says, hey, you can't assign to x because Self is immutable.</p>
+<p></p>
+<p>And Xcode will tell you that you can fix this by marking the method as mutating.</p>
+<p></p>
+<p>This is a great way I think many people it will help many people understand the mutability model in Swift better and lead to better code everywhere.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>CHRIS LATTNER: Of course, this is just one example.</p>
+<p></p>
+<p>There is a bunch more.</p>
+<p></p>
+<p>Another example of warnings we have added are for if you have a variable that can be declared as a constant, we now produce a warning, say, hey, use Let instead of Are.</p>
+<p></p>
+<p>The Swift migrator also automatically moves a lot of code to using Let instead of Are in many cases.</p>
+<p></p>
+<p>We'll warn if you declare a value, either Let or Are, but don't use it.</p>
+<p></p>
+<p>We even have warnings if you use a functional method and then ignore the result because you probably meant to use an in-place mutating method instead, and we can produce warnings for those.</p>
+<p></p>
+<p>Those are simple examples.</p>
+<p></p>
+<p>Let's talk about the SDK.</p>
+<p></p>
+<p>It's a core part of Swift, it's how well it works with Cocoa.</p>
+<p></p>
+<p>With plain Objective-C APIs, the Swift compiler has no idea whether pointers can be null or not and what the element types of collections are.</p>
+<p></p>
+<p>We have introduced a number of new features to Objective-C including the ability to express nullability and the element types of collections in Objective-C.</p>
+<p></p>
+<p>There is a whole bunch of other features that make a great experience for Objective-C code in Swift.</p>
+<p></p>
+<p>The best news about this, is that the framework engineers at Apple have done a phenomenal job adopting all these modern Objective-C features, and the Cocoa SDK in general across all the platforms feels great in Swift with no work on your part.</p>
+<p></p>
+<p>However, if you have Objective-C code, maybe you're mixing and matching with Objective-C code in your project, or maybe you have an Objective-C framework that you want to be beautiful and awesome in Swift, go to some of these sessions later today to learn more about these features so you can provide a really great Swift experience.</p>
+<p></p>
+<p>You probably have to watch one of those on video.</p>
+<p></p>
+<p>Let's talk about unit testing.</p>
+<p></p>
+<p>Across the entire tools team, testing is superimportant.</p>
+<p></p>
+<p>Testing is great in Swift until you bring up access control.</p>
+<p></p>
+<p>The problem is that Swift requires you to mark symbols Public to be visible to your unit test bundle so you can test them, leading to tons of stuff being public that really shouldn't be.</p>
+<p></p>
+<p>Swift 2 and Xcode 7 has solved this problem.</p>
+<p></p>
+<p>Now your code is automatically built in a special mode, meaning that for your tests they can get access to your public and internal symbols by default.</p>
+<p></p>
+<p>You have to use the new app to [ Applause ]</p>
+<p></p>
+<p>CHRIS LATTNER: The even better part of this, not only is it easy, it is also you still get the right behavior for your release builds, so you get the performance and the protection benefits of access control.</p>
+<p></p>
+<p>We have a bunch of talks on testing, UI Testing in Xcode will be a fantastic talk.</p>
+<p></p>
+<p>I highly recommend it.</p>
+<p></p>
+<p>Let's talk about rich comments.</p>
+<p></p>
+<p>Playgrounds, they're great, and Xcode allows you to build beautiful Swift playgrounds right in the editor using a comment syntax, a rich comment syntax.</p>
+<p></p>
+<p>The syntax is a variant of Markdown, which is a great, well-known, very popular, loved syntax.</p>
+<p></p>
+<p>We brought that to documentation comments as well.</p>
+<p></p>
+<p>This means you can build rich and pretty beautiful documentation comments, and it shows up for clients in your API.</p>
+<p></p>
+<p>So if you're producing a library, you can do great things here.</p>
+<p></p>
+<p>Finally, the migrator in Xcode.</p>
+<p></p>
+<p>As soon as you open the Swift 1 project in Xcode 7, it will prompt you and say, hey, I can upgrade this to Swift 2 for you.</p>
+<p></p>
+<p>It takes you through a couple steps, you can pick your targets, and then it gives you a dif.</p>
+<p></p>
+<p>The Swift 2 migrator is actually pretty phenomenal.</p>
+<p></p>
+<p>It covers the vast majority of the problems and cases that you will see moving from Swift 1 to Swift 2, including the error handling model, moving things to methods, changes to the SDK, a ton of the option set changes, all of these things are built in the migrator, and it does a great job.</p>
+<p></p>
+<p>There is a ton of new stuff in Swift 2, we don't have time to talk about all of it right now.</p>
+<p></p>
+<p>If you're interested in more detail, I recommend taking a look at the Swift programming language book, there is a new version up.</p>
+<p></p>
+<p>Also the Xcode 7 release notes talks about a lot of these changes in more detail.</p>
+<p></p>
+<p>Let's move on now and talk about pattern matching.</p>
+<p></p>
+<p>So probably the first place you encounter pattern matches was with the if-let statement.</p>
+<p></p>
+<p>It is a great way to take an optional, conditionally unwrap it, and then bind that result to a name with safety.</p>
+<p></p>
+<p>It is a great thing.</p>
+<p></p>
+<p>There can be too much of a great thing, of course.</p>
+<p></p>
+<p>One of the things we saw is that there is the "pyramid of doom," which is what happens when you get too many if-lets all nestled together, and suddenly your code is fifteen levels deep and you can't understand it.</p>
+<p></p>
+<p>Swift 1.2 solved this problem by introducing a compound condition into if statements.</p>
+<p></p>
+<p>Which makes this really natural.</p>
+<p></p>
+<p>You can check multiple optionals and Boolean conditions right inline, and it is a lot nicer.</p>
+<p></p>
+<p>This didn't solve the problem of early exits.</p>
+<p></p>
+<p>I'll show you some of what might be the most horrible JSON processing code you can ever imagine.</p>
+<p></p>
+<p>It will get better over time.</p>
+<p></p>
+<p>Let's go with this.</p>
+<p></p>
+<p>Here I'm pulling various fields out of an untyped JSON dictionary.</p>
+<p></p>
+<p>So I'm pulling out a name, converting it to string, produces an optional, if it doesn't match, I bail out.</p>
+<p></p>
+<p>Likewise, pull the year out, convert it to an In, if that doesn't match, bail out.</p>
+<p></p>
+<p>This pattern is very common if you're pulling lots of values out, it is better to do this bailout approach than to deeply nest your code.</p>
+<p></p>
+<p>The problem with this approach is that then you have to force unwrap the optional values when you're done.</p>
+<p></p>
+<p>Here I only use them once, but if you have a bunch of code using them, you're force unwrapping this everywhere.</p>
+<p></p>
+<p>You can do things to factor this, so the implicitly unwrapped optional is a great way to factor force unwraps into a Mecca of unsafety for you.</p>
+<p></p>
+<p>This is maybe not the right approach either.</p>
+<p></p>
+<p>This is ugly.</p>
+<p></p>
+<p>We introduced a new Guard statement.</p>
+<p></p>
+<p>The way to look at Guard is it does a check and then bales out if that check doesn't match.</p>
+<p></p>
+<p>You can do a lot of things in a Guard statement.</p>
+<p></p>
+<p>Here we're doing our optional check and we're binding a value to a name.</p>
+<p></p>
+<p>The way that it works, the way it can work, is that it guarantees that your Else exits the current scope.</p>
+<p></p>
+<p>You can do this in one of two ways, either return, throw, brake, a lot of ways to exit a scope.</p>
+<p></p>
+<p>That's fine.</p>
+<p></p>
+<p>You can also call a No Return function like Precondition Fail or Abort, and that's a good way of stopping.</p>
+<p></p>
+<p>What this guarantees for the compiler, it knows with safety and certainty that the names that are bound can be visible after the code in the fall-through.</p>
+<p></p>
+<p>If we take this to our example, our example gets nicer because now we can use Guard, and we have very safe, concise checks for this as we would expect.</p>
+<p></p>
+<p>The other nice thing about this, this builds on the rich, compound conditionals we had with If.</p>
+<p></p>
+<p>Now you can merge them together and check multiple Boolean and optional and other cases we'll talk about later right in line in your Guard statement.</p>
+<p></p>
+<p>It is pretty nice.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>CHRIS LATTNER: Let's talk about the more exciting and powerful form of pattern matching, switches.</p>
+<p></p>
+<p>Switches are I think maybe other people's favorite feature of Swift because you can do so much with pattern matching in a switch statement.</p>
+<p></p>
+<p>You check against an optional like here, you can do class hierarchy checks, you can check against ranges, there is no end to what you can do in a switch.</p>
+<p></p>
+<p>They're great when you want to write a lot of cases, but they're kind of syntactically heavyweight when you want to check just one case.</p>
+<p></p>
+<p>They have to be exhaustive, you have to have a default, it is a pain.</p>
+<p></p>
+<p>What we have done, we have taken the power of pattern matching with switch and with case and brought it to the other control statements in the language.</p>
+<p></p>
+<p>This example can be written with a new If case, check, and you can pattern match and bind variable names right in line.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>CHRIS LATTNER: We have gone further.</p>
+<p></p>
+<p>Another great statement in Swift is the for...in loop.</p>
+<p></p>
+<p>So it's very common to want to do some amount of filtering in a for...in loop.</p>
+<p></p>
+<p>Some languages have gone so far as to introduce entirely new language constructs like list comprehensions to model this kind of pattern.</p>
+<p></p>
+<p>With Swift we have done two things.</p>
+<p></p>
+<p>We have added the ability to do a simple Boolean a filter right inline in your for...in statement.</p>
+<p></p>
+<p>But you can also do full-on pattern matching right in your for loop to give you powerful conditions.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>CHRIS LATTNER: That's all I have to say about our quick tour of pattern matching.</p>
+<p></p>
+<p>We talked about the new Guard statement, which is great for early exits, talked about bringing pattern matching pervasively to the language, and we didn't talk about some of the other improvements that you can discover as you start to use Swift.</p>
+<p></p>
+<p>Thank you.</p>
+<p></p>
+<p>I will hand it over to John, who will tell you about availability checking.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>JOHN MCCALL: Thank you, Chris.</p>
+<p></p>
+<p>We often roll out new features, you may have heard of one called Force Touch.</p>
+<p></p>
+<p>Force Touch is mostly a hardware feature, of course, but it comes with a number of APIs.</p>
+<p></p>
+<p>Like this one on NSButton, letting me change how a button responds to drags over it.</p>
+<p></p>
+<p>If I want to adopt this in my own app, that's pretty easy, right?</p>
+<p></p>
+<p>I have to write some new event handling code and then I just need to take my button and set this spring loaded property on it.</p>
+<p></p>
+<p>The problem is that this may work great on my dev machine, but when I farm it out to my test hardware, I'm going to get a crash like this almost certainly.</p>
+<p></p>
+<p>That's because this is a new API.</p>
+<p></p>
+<p>It was introduced in X v10.3.</p>
+<p></p>
+<p>And, like many of you in this situation, you still have a need to support an older version of the OS.</p>
+<p></p>
+<p>How would I fix this?</p>
+<p></p>
+<p>The way I used to fix this is, okay, I'm getting this error message about the method not existing, let me check to see if the method exists.</p>
+<p></p>
+<p>One way there are a lot of different idioms that people have developed for doing this, this is common idiom, using Responds to Selector.</p>
+<p></p>
+<p>The problem is that this is a fraught, error-prone pattern.</p>
+<p></p>
+<p>For example, I actually have to figure out what the selector is, the mapping from some Swift language feature back to some Objective-C selector, it is really not the sort of detail that anybody should need to know.</p>
+<p></p>
+<p>It is also, you know, not being checked for me by the compiler because I'm sort of intrinsically escaping the sort of checking that the compiler provides.</p>
+<p></p>
+<p>For example, in this case I have actually forgotten to add this colon, which means that check will never actually be true.</p>
+<p></p>
+<p>In Swift 2 we have a better solution.</p>
+<p></p>
+<p>By default, the compiler is checking to make sure that you don't use any APIs that are not available on your minimum deployment target.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>JOHN MCCALL: If I do something like this, I'm always going to get a diagnostic.</p>
+<p></p>
+<p>What that lets me have is a sort of safe core assumption that as long as my code as long as my project fully compiles, it is at least free of this sort of trivial deployment [unintelligible].</p>
+<p></p>
+<p>Now that's not the entirety of the compatibility story, of course, but this is a great way to help you adopt new APIs.</p>
+<p></p>
+<p>I do want to use this.</p>
+<p></p>
+<p>How do I do that?</p>
+<p></p>
+<p>We added a new #available condition.</p>
+<p></p>
+<p>In #available, you list out the OS versions you want to make sure you test for.</p>
+<p></p>
+<p>And at the end you use this star to make sure that if there are any new OSs that you haven't written this code for, you at least get diagnostics about the availability there.</p>
+<p></p>
+<p>Here I've used an If statement, but I could have used the Guard statement that Chris showed us before.</p>
+<p></p>
+<p>It is the exact same sort of condition logic in all of these places.</p>
+<p></p>
+<p>That's it.</p>
+<p></p>
+<p>That's availability checking.</p>
+<p></p>
+<p>We think this is a great new way for you to be able to adopt and take advantage of the new features of new OSs automatically and safely in your projects.</p>
+<p></p>
+<p>We'll talk more about this in a talk later today.</p>
+<p></p>
+<p>I really suggest that you come to it.</p>
+<p></p>
+<p>The next thing I want to talk about is protocol extensions.</p>
+<p></p>
+<p>Extensions are a really great feature in Swift.</p>
+<p></p>
+<p>I can take an arbitrary type like Array and add my own methods to it.</p>
+<p></p>
+<p>It is not necessarily obvious why this is an important thing, but a method is a core part, it is how the native APIs of that type are expressed.</p>
+<p></p>
+<p>When I'm adding an extension, I'm really adding new functionality to a type that feels just as first class, just as core to the API of the type of anything of the designer of the type may have already added.</p>
+<p></p>
+<p>That has a lot of advantages.</p>
+<p></p>
+<p>Here I've added a Count If method, that simply calls a closure for every other array and counts up the number of times that return True.</p>
+<p></p>
+<p>There is nothing in this method that's actually specific to array at all.</p>
+<p></p>
+<p>This ought to work for an arbitrary collection.</p>
+<p></p>
+<p>Unfortunately, in Swift 1 I couldn't express this as a method anymore.</p>
+<p></p>
+<p>To make this generic over an arbitrary collection, I would have had to write something like this.</p>
+<p></p>
+<p>As a lot of you have pointed out to us, this is not exactly optimal.</p>
+<p></p>
+<p>The first thing is that this is a lot of extra syntax, there is sort of a blindness about all of the angle brackets in it, all of the extra crust to just make this generic.</p>
+<p></p>
+<p>The second thing is it is no longer a method.</p>
+<p></p>
+<p>Because it is no longer a method, first off, it doesn't feel like a natural part of using the type.</p>
+<p></p>
+<p>Second off, it is a lot less discoverable.</p>
+<p></p>
+<p>It won't show up in any lists of the functionality on array, and in particular it's not going to show up in the list of functionality provided by code completion.</p>
+<p></p>
+<p>Which means that great, you have written this awesome Count If thing, but nobody using this will realize it exists unless you point it out to them.</p>
+<p></p>
+<p>All right.</p>
+<p></p>
+<p>Let's go back.</p>
+<p></p>
+<p>We had this extension on array just to add the method to array.</p>
+<p></p>
+<p>Why can't we just extend I don't know everything that implements collection type?</p>
+<p></p>
+<p>In Swift 2, I'm happy to say that now you can.</p>
+<p></p>
+<p>You extend collection type rather than extending array.</p>
+<p></p>
+<p>When you do this, you're automatically adding the method everywhere to every single type that implements collection type, not just from the standard library or anything but even in your own types that happen to conform to this.</p>
+<p></p>
+<p>Not only is that great for writing your own generic code, but we found it really lets us overhaul a lot of things that we weren't really happy with about with the standard library in Swift 1.</p>
+<p></p>
+<p>There were a lot of things in Swift 1 that had to be global functions because they had to be generic or because we wrote them generic.</p>
+<p></p>
+<p>Then worse, in order to make the methods we sort of special-cased certain types, like array has a lot of these map and filter methods on it.</p>
+<p></p>
+<p>Other types like Set may not have.</p>
+<p></p>
+<p>In Swift 2, this functionality is going to be available, this sort of filter and map functionality is expressed with extensions, meaning it is available on every single thing.</p>
+<p></p>
+<p>It makes it a lot more discoverable, means using the standard library is more uniform, and we really think that you'll love it.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>JOHN MCCALL: I really haven't even gone into a third of the complexity in the awesome new power of this feature.</p>
+<p></p>
+<p>We're going to have a talk dedicated to this, it is a great talk tomorrow.</p>
+<p></p>
+<p>I strongly suggest you come to it.</p>
+<p></p>
+<p>It is about the great new design patterns that protocols enable in Swift.</p>
+<p></p>
+<p>The rest of the talk is going to be about error handling.</p>
+<p></p>
+<p>I don't think anyone really likes thinking about error handling.</p>
+<p></p>
+<p>It is always sort of this guilty thing in the back of our minds if you're at all like me.</p>
+<p></p>
+<p>It is really, really important.</p>
+<p></p>
+<p>When we were looking at what we could do to Swift that would really make it a more robust, more expressive language, we said, okay, the most important thing here is going to be doing something about error handling.</p>
+<p></p>
+<p>When we looked at the solutions that were out there, in other languages, in Cocoa, we weren't really happy with any of them.</p>
+<p></p>
+<p>They all have sort of major pitfalls that we didn't really like.</p>
+<p></p>
+<p>Some of them, you know, are based around propagating the errors around automatically like with NSError in Objective-C, what that creates is a lot of repetitive error-prone code where you end up having to duplicate logic all over the place.</p>
+<p></p>
+<p>That means it is very easy to get wrong.</p>
+<p></p>
+<p>More importantly, when you propagate error values around yourself, the implicit default behavior is that you're ignoring errors.</p>
+<p></p>
+<p>That's just never the right default.</p>
+<p></p>
+<p>You should have to think about errors at least a little bit.</p>
+<p></p>
+<p>On the other end of the spectrum, there are languages that propagate errors around implicitly, like with exception handling.</p>
+<p></p>
+<p>But we didn't like how any of those worked either.</p>
+<p></p>
+<p>There is too much that was implicit, it was too easy not to think of errors again, and you end up with pitfalls where you just didn't understand what could go wrong in your program.</p>
+<p></p>
+<p>You didn't understand how control could flow from one place to another.</p>
+<p></p>
+<p>Again, it wasn't a safe, reliable programming model.</p>
+<p></p>
+<p>There are really three different ways that functions can fail.</p>
+<p></p>
+<p>One way is that they can simply a lot of functions just fail in one fairly simple, innate, obvious way.</p>
+<p></p>
+<p>For example, unless you're running a compiler, you probably don't care why parsing an integer out of a string failed, this isn't going to be something that you're getting the juicy details of and reporting to the user.</p>
+<p></p>
+<p>Probably you want to handle that directly.</p>
+<p></p>
+<p>That's already something that when we looked at it, this is handled extremely well in Swift already, just with optional results.</p>
+<p></p>
+<p>We didn't think we needed to do anything here.</p>
+<p></p>
+<p>We're really happy with how that works already.</p>
+<p></p>
+<p>On the other end of the spectrum, there are a lot of things that are logic failures in your program that are programmer mistakes, assertions, indexes out of bounds, the vast majority of ways in which people use NSException, that kind of thing.</p>
+<p></p>
+<p>For these things, they really actually shouldn't be recoverable.</p>
+<p></p>
+<p>When you can recover from this kind of thing, you're just promoting a less stable program overall.</p>
+<p></p>
+<p>You don't know what state your program is actually in if you randomly recover from an index out of bounds.</p>
+<p></p>
+<p>You could even be creating security problems in your application.</p>
+<p></p>
+<p>In the middle, there is this large spectrum of APIs that can fail in a very rich set of ways.</p>
+<p></p>
+<p>That's really what we wanted to focus on.</p>
+<p></p>
+<p>The things that you today in Cocoa would use NSError for.</p>
+<p></p>
+<p>I want to work through an example for you.</p>
+<p></p>
+<p>This is a preflight method, I have some sort of operation I want to prefly to make sure it works.</p>
+<p></p>
+<p>This is something that a lot of you have written I think before.</p>
+<p></p>
+<p>I'll check to see whether some file is actually reachable, and then I'm going to reset some state associated with the operation.</p>
+<p></p>
+<p>Now checking whether the resource is reachable, this is an operation that can fail.</p>
+<p></p>
+<p>It can fail in a wide variety of ways.</p>
+<p></p>
+<p>It should report something back because, hey, somebody calling this really may want to know why something isn't reachable and maybe treat it differently depending on why.</p>
+<p></p>
+<p>If I wanted to use NSError for this, this is kind of what the code ends up looking like.</p>
+<p></p>
+<p>I'm taking this error, I'm propagating it out to my caller.</p>
+<p></p>
+<p>There are things to like about this.</p>
+<p></p>
+<p>There are a lot of things we don't really like.</p>
+<p></p>
+<p>It adds a lot of boilerplate to my logic.</p>
+<p></p>
+<p>I had a tight little two-line function, now it is turned into this you know, it has this If statement, extra nesting, the extra parameter, there is a lot here whose sole purpose is to express there is an error, and we're propagating it out to the caller.</p>
+<p></p>
+<p>Worse, again, there is a convention here, that's a convention you need to know about.</p>
+<p></p>
+<p>And it's a convention you have to implement manually, and the compiler's not really going to help you with it.</p>
+<p></p>
+<p>Again, I made a mistake here.</p>
+<p></p>
+<p>The convention is that an error happens when you return False, I'm actually checking it the wrong way.</p>
+<p></p>
+<p>I don't know why they trust me to even work with compilers [laughter].</p>
+<p></p>
+<p>I need to add this Not here in order to get the behavior I want.</p>
+<p></p>
+<p>Okay. That's well, no, sorry.</p>
+<p></p>
+<p>Those are the downsides of this.</p>
+<p></p>
+<p>There is actually a lot that we like about it too.</p>
+<p></p>
+<p>The first thing is, it is obvious from reading this code that check resource is reachable is something that can fail.</p>
+<p></p>
+<p>It says right there in the name, it talks about errors, it has the explicit error handling thing, this explicit error parameter.</p>
+<p></p>
+<p>Similarly, it is obvious that preflight is an operation that can fail.</p>
+<p></p>
+<p>Again, explicit error parameter, the return value, et cetera.</p>
+<p></p>
+<p>The third thing is, there isn't implicit control flow.</p>
+<p></p>
+<p>I can just look at this thing and understand where all the jumps in it are.</p>
+<p></p>
+<p>I can analyze my code statically as a human, not as a compiler.</p>
+<p></p>
+<p>As a human, I can look at this code and reason about what it is doing without needing to know every last detail of every single function that I'm calling.</p>
+<p></p>
+<p>All right.</p>
+<p></p>
+<p>Now let's go back to the example.</p>
+<p></p>
+<p>This is how it looked before.</p>
+<p></p>
+<p>What's going to happen if I try to compile this in Swift?</p>
+<p></p>
+<p>I'm going to get an error message because I'm not handling the error.</p>
+<p></p>
+<p>There are two components to handling errors in Swift.</p>
+<p></p>
+<p>The first is that whenever you're calling an API that can fail, you have to use this Try keyword.</p>
+<p></p>
+<p>The Try communicates, it is really there primarily for someone reading the code.</p>
+<p></p>
+<p>It communicates to you, hey, this is something that can fail.</p>
+<p></p>
+<p>That means when you're coming back, when you're maintaining this in the future, I know straight off Reset State, that's not necessarily going to be called every single time to this function.</p>
+<p></p>
+<p>That may be a really important thing for me to know.</p>
+<p></p>
+<p>When I'm writing this code in the first place, it is something for me to think about.</p>
+<p></p>
+<p>Hey, should Reset State be called every single time I exit the function?</p>
+<p></p>
+<p>For a preflight operation?</p>
+<p></p>
+<p>Maybe. That alone isn't enough, I'm not actually handling the error in any way.</p>
+<p></p>
+<p>This is because in Swift, by default, functions can't throw.</p>
+<p></p>
+<p>That's actually a really core aspect of our design because what it means is errors are bounded.</p>
+<p></p>
+<p>You don't have to think about literally everything being able to throw an exception like it can in Java or C# or basically every language using exceptions.</p>
+<p></p>
+<p>Instead, it is really just very specific things that you know you need to worry about whether they can throw.</p>
+<p></p>
+<p>And when you call them in your code, it is always marked with Try.</p>
+<p></p>
+<p>That combination communicates a lot.</p>
+<p></p>
+<p>Okay. Well, suppose I do want to just propagate the error out to my caller.</p>
+<p></p>
+<p>In order to do that, all I have to do is tell the compiler, hey, it is okay for this thing to throw the error out.</p>
+<p></p>
+<p>I do that with throws.</p>
+<p></p>
+<p>That may not be how I want to handle this.</p>
+<p></p>
+<p>This is a preflight operation.</p>
+<p></p>
+<p>I probably want to just swallow the error and tell whoever is calling me whether or not the preflight succeeded.</p>
+<p></p>
+<p>To do that, I have to handle it.</p>
+<p></p>
+<p>I handle it by writing this Do Catch.</p>
+<p></p>
+<p>Any code that's within the Do, any error arising within it, is forwarded, sort of filtered through all of the catches.</p>
+<p></p>
+<p>So what comes after a catch, well, anything that you could write in a switch.</p>
+<p></p>
+<p>The entire power of Swift's pattern matching syntax is available in a catch.</p>
+<p></p>
+<p>As a very simple, common syntactic refinement, catches alone like this is a shorthand for catching it and binding this special error variable to it.</p>
+<p></p>
+<p>I could also write a much more elaborate thing.</p>
+<p></p>
+<p>For example, I may want to treat certain kinds of error as special, maybe they're acceptable in my preflight.</p>
+<p></p>
+<p>I don't know why the file not existing would be okay, maybe I really want to check if it exists and, you know, isn't actually usable for some permissions reason.</p>
+<p></p>
+<p>If I wanted to, I can pattern match against the error code and domain directly like this.</p>
+<p></p>
+<p>As an aside, there is a third way of "handling errors."</p>
+<p></p>
+<p>It does often happen that you set up preconditions such that you know that a particular call to something that can formally throw can't actually throw.</p>
+<p></p>
+<p>For example, maybe this file is actually in my app bundle and I know that if I can't read a file in my own app bundle, something is really, really wrong.</p>
+<p></p>
+<p>There's probably no real way to recover from this.</p>
+<p></p>
+<p>So with this common pattern, where you really want a fatal error because an error is thrown, it has a very compact syntax associated with it, this Try!</p>
+<p></p>
+<p>All that really does is creates an assertion that the code within the Try doesn't actually throw.</p>
+<p></p>
+<p>If it does, your program will crash just like any sort of assertion failure.</p>
+<p></p>
+<p>That's something that you can debug very, very easily.</p>
+<p></p>
+<p>It is not something you want to use all the time, but when you need it, it is really, really handy.</p>
+<p></p>
+<p>Going back a bit.</p>
+<p></p>
+<p>I caught an error.</p>
+<p></p>
+<p>What kind of thing is an error?</p>
+<p></p>
+<p>Well, we have a protocol built in to the standard library called ErrorType.</p>
+<p></p>
+<p>You can throw any value whose type conforms to the ErrorType.</p>
+<p></p>
+<p>When you catch something, that thing that you're pattern matching against is an arbitrary value of ErrorType.</p>
+<p></p>
+<p>We think it is actually really important that we don't track errors more precisely than just whether or not an error was thrown.</p>
+<p></p>
+<p>It is not like Java, where you end up with a pedantic list of every single exception that might have been thrown out and then you end up with this really complicated propagation problem every time you change errors.</p>
+<p></p>
+<p>Just tracking whether an error can be thrown is usually good enough, almost always.</p>
+<p></p>
+<p>We think this is a great model.</p>
+<p></p>
+<p>You can make your own types conform to ErrorType.</p>
+<p></p>
+<p>This is a process that's a lot easier to do than it was in Cocoa.</p>
+<p></p>
+<p>Enums are a great way of expressing this.</p>
+<p></p>
+<p>They're a great way to express a group of related problems, just like they're you know, so that's especially true because you can associate data with each case in an enum.</p>
+<p></p>
+<p>If I want to report a richer error message with maybe something about the maybe I'm checking for some invalid state and I want to remember what the invalid state was, I can embed that directly in my enum as an associated value for that particular case.</p>
+<p></p>
+<p>All you need to do in order to make an enum usable as an error is make it conform to ErrorType.</p>
+<p></p>
+<p>The compiler automatically handles the details of the synthesis.</p>
+<p></p>
+<p>This is much better than the process of creating a new NSError domain and associating things with it.</p>
+<p></p>
+<p>We think that this will really help you make great, expressive error-throwing APIs in your own code when you need to.</p>
+<p></p>
+<p>Let's go back to that example that Chris had up before, this JSON processor.</p>
+<p></p>
+<p>Here I'm returning an error back using an Either type in the string.</p>
+<p></p>
+<p>Let's make this look more like it would in Swift.</p>
+<p></p>
+<p>The first thing is, instead of the string, I'll use that data error enum I just talked about.</p>
+<p></p>
+<p>I just have to throw, use the new throw statement in order to throw those values, and that just works.</p>
+<p></p>
+<p>The other side of this, of course, is I'll need to change the return type.</p>
+<p></p>
+<p>I'm no longer returning an Either type.</p>
+<p></p>
+<p>This isn't something that every single caller has to carefully micromanage the return value of in order to check for errors.</p>
+<p></p>
+<p>I just change it so that it returns Person and is also a throwing method, then I don't have to mess around with these little details.</p>
+<p></p>
+<p>Let's make a new example that culls that method we just created.</p>
+<p></p>
+<p>We parsed out, we have a snippet of JSON, we parsed out a person.</p>
+<p></p>
+<p>Now we'll use that to parse out an entire sales record involving that person and some item.</p>
+<p></p>
+<p>Sometimes it happens that you need to, you know, this is a bit of a contrived example.</p>
+<p></p>
+<p>Sorry. Sometimes I want to observe this kind of process.</p>
+<p></p>
+<p>I'm going to have some sort of delegate, I'll let it know that I have started reading a sales record.</p>
+<p></p>
+<p>I have now told it I started reading, obviously I should tell it when I'm finished reading.</p>
+<p></p>
+<p>I can add that code down here.</p>
+<p></p>
+<p>The problem is I'm not doing anything right with error handling.</p>
+<p></p>
+<p>It is really easy for all of these like if my delegate actually has Careful and Variants set up around necessarily getting called every single time getting called when the sale finishes.</p>
+<p></p>
+<p>If my delegate has variance it wants to maintain about getting called on both ends, I'll mess them up if I actually fail the process.</p>
+<p></p>
+<p>This is a sort of problem that comes up a lot and makes error handling seem so fragile.</p>
+<p></p>
+<p>Okay. One way I could solve this, of course, is that I simply add my call to Did End Reading Sale on both of these throw sites and then, of course, I'm still not handling this call down to Process Person.</p>
+<p></p>
+<p>In order to do something there, I have to add this Do Catch.</p>
+<p></p>
+<p>This is a really, really one, this is incredibly verbose.</p>
+<p></p>
+<p>But it's also really error prone because it is easy for me to add new code to this, new kinds of processing that it then immediately will get out of date if I actually do something.</p>
+<p></p>
+<p>If I forget to add Did End Reading Sale along that particular path.</p>
+<p></p>
+<p>Swift 2 has a much better option.</p>
+<p></p>
+<p>It is called Defer.</p>
+<p></p>
+<p>A Defer statement creates an action.</p>
+<p></p>
+<p>When you execute it, that action is going to be executed no matter how the current scope is left.</p>
+<p></p>
+<p>If I return out of it, if I fall out of it, if I throw an error out of it, no matter how, I know that that thing is going to be executed.</p>
+<p></p>
+<p>That means that as someone reading this code, maintaining this code, I feel perfectly confident Did End Reading Sale will be executed no matter what I do to finish reading the sale.</p>
+<p></p>
+<p>That's a really, really valuable thing to know.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>JOHN MCCALL: I want to make a quick note about implementation.</p>
+<p></p>
+<p>Some of you who are used to exception handling may be aware that exception handling in many languages is implemented in a way that's very, very highly biased against errors actually being thrown.</p>
+<p></p>
+<p>It is often three, maybe even four orders of magnitude slower to return out of a function by throwing an error than it is to simply return out in the normal manner.</p>
+<p></p>
+<p>Now, that's necessitated by some aspects of the language designs.</p>
+<p></p>
+<p>It is not really something that we wanted to imitate in Swift.</p>
+<p></p>
+<p>All you really need to know here is that the Swift implementation here is far more balanced, much more like, basically, an If statement in the caller.</p>
+<p></p>
+<p>That means it is not completely free in order to call something that can throw an error.</p>
+<p></p>
+<p>But it means that you don't have to worry about our error-handling feature being so expensive that you can't use it in order for the actual reasons that you need to if you do need to care about the efficiency of the error path.</p>
+<p></p>
+<p>Finally, I just want to note, Swift, the Swift error handling design works beautifully with Cocoa APIs.</p>
+<p></p>
+<p>We automatically recognize the most common conventions you see in Cocoa.</p>
+<p></p>
+<p>For example, methods that have an NSError Out parameter and return Bool automatically become throwing methods and the Bool return value goes away.</p>
+<p></p>
+<p>Similarly if it returns an optional result, we recognize that pattern as the nil indicates an invalid thing, and it no longer returns an optional result because the nil, of course, is subsumed within error handling.</p>
+<p></p>
+<p>[ Applause ]</p>
+<p></p>
+<p>JOHN MCCALL: Just with these two very simple rules we found that the vast, vast majority of APIs in the system import and automatically work with this new Swift error handling model seamlessly and beautifully, and we think this is a great new way to handle errors in Swift.</p>
+<p></p>
+<p>I really strongly suggest that you check this out.</p>
+<p></p>
+<p>You probably don't really have much of a choice, they're all over the place [laughter].</p>
+<p></p>
+<p>JOHN MCCALL: You know, we really are proud of this design.</p>
+<p></p>
+<p>We think it is going to greatly improve the robustness and the expressiveness of writing code and let you design your own APIs that work just wonderfully.</p>
+<p></p>
+<p>Let me sum up.</p>
+<p></p>
+<p>We have been working in Swift 2 really hard to present, to give you a new language, really flesh out the core aspects of programming in Swift, using the tools in Swift, giving you a safer, more robust environment, and generally making things great.</p>
+<p></p>
+<p>An invaluable tool to us, this entire time, has been your feedback.</p>
+<p></p>
+<p>We really, really appreciate it.</p>
+<p></p>
+<p>We are listening, I promise.</p>
+<p></p>
+<p>If you have things to say to us, of course you can simply use bug reporter, but you can also email Stefan Lesser, come on the dev forums, most of us are there all the time.</p>
+<p></p>
+<p>We're really happy to respond to any question, hear your feedback about it.</p>
+<p></p>
+<p>We really, really value you.</p>
+<p></p>
+<p>Thank you very much [applause].</p>
+<p></p>
+<p>Have a great WWDC 2015.</p>
+<p></p>
+<p>[ Applause ]</p>
+    
+    </body>
+</html>
